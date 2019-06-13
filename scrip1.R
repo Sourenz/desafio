@@ -31,24 +31,56 @@ graficos <- data.frame(media_gastos_2008 = c(15160, 31178, 1040, 92.4, 2164, 138
                        nome = c("transportes", "publicidade", "pesquisas", "multas", "comite", "pessoal", "doacao", "nao especificado"),
                        stringsAsFactors = FALSE)
 
-graficos1 <- data.frame(media_gastos_2008 = c(33141, 31178, 15160, 13824, 2440, 2164, 1040, 92.4),
-                        nome = c("não especificado", "publicidade", "trasnportes", "pessoal", "doação", "cômite", "pesquisas", "multas"),
+graficos1 <- data.frame(media_gastos_2008 = c(15160, 31178, 1040, 92.4, 2164, 13824, 2440, 33414),
+                       media_gastos_2012 = c(17892, 45850, 87.0, 332, 61638, 1331, 14554, 4004),
+                       nome = c("transportes", "publicidade", "pesquisas", "multas", "comite", "pessoal", "doacao", "nao especificado"),
                        stringsAsFactors = FALSE)
 
+graficos1%>%
+  summarise(mean(media_gastos_2008))
+
+graficos1%>%
+  summarise(mean(media_gastos_2012))
+
+
+#grafico bagunçado
 graficos%>%
   ggplot(aes(nome, media_gastos_2008)) +
   geom_bar(stat = "identity") + 
   coord_flip()
 
+#teste
 graficos%>%
   ggplot(aes(nome, media_gastos_2012)) +
   geom_bar(stat = "identity") +
+  stat_summary(fun.y=mean,geom="line",aes(group=""),linetype="dashed")+
+  coord_flip()
+
+#reordenando pra ficar em valor decrescente
+idx <- order(graficos1$media_gastos_2008, decreasing = FALSE)
+levels <- graficos1$media_gastos_2008[idx]
+graficos1$nome <- factor(graficos1$media_gastos_2008, levels = levels, ordered = TRUE)
+graficos1$nome
+class(graficos1$nome)
+
+#metendo o grafico
+
+ggplot(graficos1, aes(x=nome, y= media_gastos_2008)) +
+  geom_bar(stat='identity')+
+  geom_hline(linetype = "dashed", yintercept = mean(8351,71), color="black")+
   coord_flip()+
-  xlab( )
+  labs(x=NULL, y=NULL)
 
-reorder_size <- function(graficos) {
-  factor(media_gastos_2008, levels = names(sort(table(graficos), decreasing=T)))
-}
+#BLABLABLA CORINTHIANS MAMOU O MENGAO - como reordenar os scores
+idx2 <- order(graficos1$media_gastos_2012, decreasing = FALSE)
+levels <- graficos1$media_gastos_2012[idx2]
+graficos1$nome <- factor(graficos1$media_gastos_2012, levels = levels, ordered = TRUE)
+graficos1$nome
+class(graficos1$nome)
 
-graficos
-
+#BLABLABLA O GRAWFICO REORDENADO
+ggplot(graficos1, aes(x=nome, y= media_gastos_2012)) +
+  geom_bar(stat='identity')+
+  geom_hline(linetype = "dashed", yintercept = mean(18211), color="black")+
+  coord_flip()+
+  labs(x= "nome", y=NULL)
